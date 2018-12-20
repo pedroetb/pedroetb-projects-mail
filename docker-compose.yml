@@ -5,9 +5,14 @@ services:
     image: ${IMAGE_NAME:-mwader/postfix-relay}:${IMAGE_TAG:-latest}
     environment:
       - POSTFIX_myhostname=${PUBLIC_HOSTNAME}
+      - POSTFIX_mynetworks=${MAIL_NETWORKS}
       - OPENDKIM_DOMAINS=${PUBLIC_HOSTNAME}
     networks:
       - mail-net
+    ports:
+      - target: 25
+        published: ${MAIL_PORT:-25}
+        mode: ${MAIL_PORT_MODE:-host}
     volumes:
       - mail-vol:/var/mail
       - dkim-vol:/etc/opendkim/keys
