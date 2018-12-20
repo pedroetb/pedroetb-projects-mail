@@ -2,11 +2,10 @@ version: '3.7'
 
 services:
   mail:
-    image: ${IMAGE_NAME:-mwader/postfix-relay}:${IMAGE_TAG:-latest}
+    image: ${IMAGE_NAME:-marvambass/versatile-postfix}:${IMAGE_TAG:-latest}
+    command: ${PUBLIC_HOSTNAME} ${MAIL_USER}:${MAIL_PASS}
     environment:
-      - POSTFIX_myhostname=${PUBLIC_HOSTNAME}
-      - POSTFIX_mynetworks=${MAIL_NETWORKS:-127.0.0.0/8 10.0.0.0/8 172.0.0.0/8}
-      - OPENDKIM_DOMAINS=${PUBLIC_HOSTNAME}
+      - POSTFIX_RAW_CONFIG_MYNETWORKS=${MAIL_NETWORKS:-127.0.0.0/8 10.0.0.0/8 172.0.0.0/8}
     networks:
       - mail-net
     ports:
@@ -15,9 +14,7 @@ services:
         mode: ${MAIL_PORT_MODE:-host}
     volumes:
       - mail-vol:/var/mail
-      - dkim-vol:/etc/opendkim/keys
-      - postfix-lib-vol:/var/lib/postfix
-      - postfix-spool-vol:/var/spool/postfix
+      - dkim-vol:/etc/postfix/dkim/
     deploy:
       mode: replicated
       replicas: ${MAIL_REPLICAS:-1}
@@ -43,9 +40,3 @@ volumes:
 
   dkim-vol:
     name: ${DKIM_VOL_NAME:-dkim-vol}
-
-  postfix-lib-vol:
-    name: ${POSTFIX_LIB_VOL_NAME:-postfix-lib-vol}
-
-  postfix-spool-vol:
-    name: ${POSTFIX_SPOOL_VOL_NAME:-postfix-spool-vol}
