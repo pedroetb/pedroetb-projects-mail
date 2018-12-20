@@ -1,0 +1,46 @@
+version: '3.7'
+
+services:
+  mail:
+    image: mwader/postfix-relay:${IMAGE_TAG:-latest}
+    environment:
+      - POSTFIX_myhostname=${PUBLIC_HOSTNAME}
+      - OPENDKIM_DOMAINS=${PUBLIC_HOSTNAME}
+    networks:
+      - mail-net
+    volumes:
+      - mail-vol:/var/mail
+      - dkim-vol:/etc/opendkim/keys
+      - postfix-lib-vol:/var/lib/postfix
+      - postfix-spool-vol:/var/spool/postfix
+    deploy:
+      mode: replicated
+      replicas: ${MAIL_REPLICAS:-1}
+      restart_policy:
+        delay: ${MAIL_RESTART_POLICY_DELAY:-10s}
+        window: ${MAIL_RESTART_POLICY_WINDOW:-1m}
+      resources:
+        limits:
+          cpus: "${MAIL_LIMITS_CPUS:-0.1}"
+          memory: ${MAIL_LIMITS_MEMORY:-32M}
+        reservations:
+          memory: ${MAIL_RESERVATIONS_MEMORY:-16M}
+
+networks:
+  mail-net:
+    name: ${MAIL_NET_NAME:-mail-net}
+    driver: overlay
+    attachable: ${MAIL_NET_ATTACHABLE:-true}
+
+volumes:
+  mail-vol:
+    name: ${MAIL_VOL_NAME:-mail-vol}
+
+  dkim-vol:
+    name: ${DKIM_VOL_NAME:-dkim-vol}
+
+  postfix-lib-vol:
+    name: ${POSTFIX_LIB_VOL_NAME:-postfix-lib-vol}
+
+  postfix-spool-vol:
+    name: ${POSTFIX_SPOOL_VOL_NAME:-postfix-spool-vol}
