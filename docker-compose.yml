@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
   mail:
-    image: mwader/postfix-relay:${IMAGE_TAG:-latest}
+    image: ${IMAGE_NAME:-mwader/postfix-relay}:${IMAGE_TAG:-latest}
     environment:
       - POSTFIX_myhostname=${PUBLIC_HOSTNAME}
       - OPENDKIM_DOMAINS=${PUBLIC_HOSTNAME}
