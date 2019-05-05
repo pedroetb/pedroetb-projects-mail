@@ -5,8 +5,8 @@ services:
     image: ${IMAGE_NAME:-marvambass/versatile-postfix}:${IMAGE_TAG:-latest}
     command: ${PUBLIC_HOSTNAME} ${MAIL_USER}:${MAIL_PASS}
     environment:
-      - POSTFIX_RAW_CONFIG_MYNETWORKS=${MAIL_NETWORKS:-127.0.0.0/8 10.0.0.0/8 172.0.0.0/8}
-      - ALIASES=postmaster:${MAIL_USER};hostmaster:${MAIL_USER};webmaster:${MAIL_USER};admin:${MAIL_USER};abuse:${MAIL_USER};${MAIL_USER}:${EXTERNAL_EMAIL_ADDRESS};${ADDITIONAL_ALIASES}
+      POSTFIX_RAW_CONFIG_MYNETWORKS: ${MAIL_NETWORKS}
+      ALIASES: postmaster:${MAIL_USER};hostmaster:${MAIL_USER};webmaster:${MAIL_USER};admin:${MAIL_USER};abuse:${MAIL_USER};${MAIL_USER}:${EXTERNAL_EMAIL_ADDRESS};${ADDITIONAL_ALIASES}
     networks:
       - mail-net
     ports:
@@ -24,7 +24,7 @@ services:
         window: ${MAIL_RESTART_POLICY_WINDOW:-1m}
       resources:
         limits:
-          cpus: "${MAIL_LIMITS_CPUS:-0.1}"
+          cpus: '${MAIL_LIMITS_CPUS:-0.1}'
           memory: ${MAIL_LIMITS_MEMORY:-32M}
         reservations:
           memory: ${MAIL_RESERVATIONS_MEMORY:-16M}
