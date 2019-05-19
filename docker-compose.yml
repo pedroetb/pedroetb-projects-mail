@@ -12,7 +12,7 @@ services:
     ports:
       - target: 25
         published: ${MAIL_PORT:-25}
-        mode: ${MAIL_PORT_MODE:-host}
+        mode: ${MAIL_PORT_MODE:-ingress}
     volumes:
       - mail-vol:/var/mail
       - dkim-vol:/etc/postfix/dkim/
@@ -27,7 +27,8 @@ services:
           cpus: '${MAIL_LIMITS_CPUS:-0.1}'
           memory: ${MAIL_LIMITS_MEMORY:-32M}
         reservations:
-          memory: ${MAIL_RESERVATIONS_MEMORY:-16M}
+          cpus: '${MAIL_RESERVATIONS_CPUS:-0.001}'
+          memory: ${MAIL_RESERVATIONS_MEMORY:-8M}
 
 networks:
   mail-net:
@@ -38,6 +39,16 @@ networks:
 volumes:
   mail-vol:
     name: ${MAIL_VOL_NAME:-mail-vol}
+    driver: local
+    driver_opts:
+      type: ${MAIL_VOLUME_TYPE}
+      o: ${MAIL_VOLUME_OPTIONS}
+      device: ${MAIL_VOLUME_DEVICE}
 
   dkim-vol:
     name: ${DKIM_VOL_NAME:-dkim-vol}
+    driver: local
+    driver_opts:
+      type: ${DKIM_VOLUME_TYPE}
+      o: ${DKIM_VOLUME_OPTIONS}
+      device: ${DKIM_VOLUME_DEVICE}
