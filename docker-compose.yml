@@ -6,6 +6,7 @@ services:
     command: ${PUBLIC_HOSTNAME} ${MAIL_USER}:${MAIL_PASS}
     environment:
       ALIASES: postmaster:${MAIL_USER};hostmaster:${MAIL_USER};webmaster:${MAIL_USER};admin:${MAIL_USER};abuse:${MAIL_USER};${MAIL_USER}:${EXTERNAL_EMAIL_ADDRESS};${ADDITIONAL_ALIASES}
+      POSTFIX_RAW_CONFIG_SMTPD_HELO_RESTRICTIONS:
     networks:
       - mail-net
     ports:
