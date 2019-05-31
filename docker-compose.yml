@@ -11,17 +11,26 @@ services:
       - mail-net
     ports:
       - target: 25
-        published: ${MAIL_PORT:-25}
-        mode: ${MAIL_PORT_MODE:-ingress}
+        published: ${MAIL_PORT}
+        protocol: tcp
+        mode: ${MAIL_PORT_MODE}
+      - target: 25
+        published: ${MAIL_PORT}
+        protocol: udp
+        mode: ${MAIL_PORT_MODE}
     volumes:
-      - mail-vol:/var/mail
+      - data-vol:/var/mail
       - dkim-vol:/etc/postfix/dkim/
+      - log-vol:/var/log
     deploy:
       mode: replicated
       replicas: ${MAIL_REPLICAS:-1}
       restart_policy:
         delay: ${MAIL_RESTART_POLICY_DELAY:-10s}
         window: ${MAIL_RESTART_POLICY_WINDOW:-1m}
+      placement:
+        constraints:
+          - ${MAIL_PLACEMENT_CONSTRAINT:-node.hostname == node}
       resources:
         limits:
           cpus: '${MAIL_LIMITS_CPUS:-0.1}'
@@ -37,18 +46,11 @@ networks:
     attachable: ${MAIL_NET_ATTACHABLE:-true}
 
 volumes:
-  mail-vol:
-    name: ${MAIL_VOL_NAME:-mail-vol}
-    driver: local
-    driver_opts:
-      type: ${MAIL_VOLUME_TYPE}
-      o: ${MAIL_VOLUME_OPTIONS}
-      device: ${MAIL_VOLUME_DEVICE}
+  data-vol:
+    name: ${MAIL_DATA_VOL_NAME:-mail-data-vol}
 
   dkim-vol:
-    name: ${DKIM_VOL_NAME:-dkim-vol}
-    driver: local
-    driver_opts:
-      type: ${DKIM_VOLUME_TYPE}
-      o: ${DKIM_VOLUME_OPTIONS}
-      device: ${DKIM_VOLUME_DEVICE}
+    name: ${MAIL_DKIM_VOL_NAME:-mail-dkim-vol}
+
+  log-vol:
+    name: ${MAIL_LOG_VOL_NAME:-mail-log-vol}
