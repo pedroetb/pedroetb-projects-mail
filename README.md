@@ -14,7 +14,7 @@ Used to verify content of signed emails. Public key can be found inside `dkim-vo
 
 ### SPF
 
-Used to prevent being considered as spam, validating which domains are allowed to send emails.
+Used to prevent being considered as spam, validating which origins are authorized to send emails.
 
 * Type: `TXT`
 * Name: `<domain>`
@@ -22,11 +22,11 @@ Used to prevent being considered as spam, validating which domains are allowed t
 
 ### DMARC
 
-Used to define what to do with incoming spam.
+Used to ensure DKIM and SPF, inform own spam policy and receive reports.
 
 * Type: `TXT`
 * Name: `_dmarc.<domain>`
-* Value: `v=DMARC1; p=quarantine; rua=mailto:postmaster@<domain>`
+* Value: `v=DMARC1; p=quarantine; adkim=s; aspf=s; rua=mailto:postmaster@<domain>; ri=2628000; ruf=mailto:postmaster@<domain>; fo=0:1:d:s`
 
 ## Test mail server
 
