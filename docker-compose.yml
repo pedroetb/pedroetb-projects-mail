@@ -8,49 +8,50 @@ services:
       ALIASES: postmaster:${MAIL_USER};hostmaster:${MAIL_USER};webmaster:${MAIL_USER};admin:${MAIL_USER};abuse:${MAIL_USER};${MAIL_USER}:${EXTERNAL_EMAIL_ADDRESS};${ADDITIONAL_ALIASES}
       POSTFIX_RAW_CONFIG_SMTPD_HELO_RESTRICTIONS:
     networks:
-      - mail-net
+      mail-net:
     ports:
-      - target: 25
-        published: ${MAIL_PORT}
+      - target: ${INTERNAL_PORT}
+        published: ${PORT}
         protocol: tcp
-        mode: ${MAIL_PORT_MODE}
-      - target: 25
-        published: ${MAIL_PORT}
+        mode: ${PORT_MODE}
+      - target: ${INTERNAL_PORT}
+        published: ${PORT}
         protocol: udp
-        mode: ${MAIL_PORT_MODE}
+        mode: ${PORT_MODE}
     volumes:
       - data-vol:/var/mail
       - dkim-vol:/etc/postfix/dkim/
       - log-vol:/var/log
     deploy:
       mode: replicated
-      replicas: ${MAIL_REPLICAS:-1}
+      replicas: ${REPLICAS:-1}
       restart_policy:
-        delay: ${MAIL_RESTART_POLICY_DELAY:-10s}
-        window: ${MAIL_RESTART_POLICY_WINDOW:-1m}
+        delay: ${RESTART_DELAY:-10s}
+      update_config:
+        delay: ${UPDATE_DELAY:-1m}
       placement:
         constraints:
-          - ${MAIL_PLACEMENT_CONSTRAINT:-node.hostname == node}
+          - ${PLACEMENT_CONSTRAINT:-node.hostname == node}
       resources:
         limits:
-          cpus: '${MAIL_LIMITS_CPUS:-0.1}'
-          memory: ${MAIL_LIMITS_MEMORY:-32M}
+          cpus: '${RESOURCES_LIMITS_CPUS:-0.1}'
+          memory: ${RESOURCES_LIMITS_MEMORY:-32M}
         reservations:
-          cpus: '${MAIL_RESERVATIONS_CPUS:-0.001}'
-          memory: ${MAIL_RESERVATIONS_MEMORY:-8M}
+          cpus: '${RESOURCES_RESERVATIONS_CPUS:-0.001}'
+          memory: ${RESOURCES_RESERVATIONS_MEMORY:-8M}
 
 networks:
   mail-net:
     name: ${MAIL_NET_NAME:-mail-net}
-    driver: overlay
+    driver: ${MAIL_NET_DRIVER:-overlay}
     attachable: ${MAIL_NET_ATTACHABLE:-true}
 
 volumes:
   data-vol:
-    name: ${MAIL_DATA_VOL_NAME:-mail-data-vol}
+    name: ${DATA_VOL_NAME:-mail-data-vol}
 
   dkim-vol:
-    name: ${MAIL_DKIM_VOL_NAME:-mail-dkim-vol}
+    name: ${DKIM_VOL_NAME:-mail-dkim-vol}
 
   log-vol:
-    name: ${MAIL_LOG_VOL_NAME:-mail-log-vol}
+    name: ${LOG_VOL_NAME:-mail-log-vol}
