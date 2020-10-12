@@ -18,27 +18,11 @@ services:
       mail-net:
     ports:
       - target: ${INTERNAL_PORT}
-        published: ${PORT1}
+        published: ${PORT}
         protocol: tcp
         mode: ${PORT_MODE}
       - target: ${INTERNAL_PORT}
-        published: ${PORT1}
-        protocol: udp
-        mode: ${PORT_MODE}
-      - target: ${INTERNAL_PORT}
-        published: ${PORT2}
-        protocol: tcp
-        mode: ${PORT_MODE}
-      - target: ${INTERNAL_PORT}
-        published: ${PORT2}
-        protocol: udp
-        mode: ${PORT_MODE}
-      - target: ${INTERNAL_PORT}
-        published: ${PORT3}
-        protocol: tcp
-        mode: ${PORT_MODE}
-      - target: ${INTERNAL_PORT}
-        published: ${PORT3}
+        published: ${PORT}
         protocol: udp
         mode: ${PORT_MODE}
     volumes:
