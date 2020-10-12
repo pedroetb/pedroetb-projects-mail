@@ -4,18 +4,41 @@ services:
   mail:
     image: ${IMAGE_NAME:-marvambass/versatile-postfix}:${IMAGE_TAG:-latest}
     command: ${PUBLIC_HOSTNAME} ${MAIL_USER}:${MAIL_PASS}
+    hostname: ${PUBLIC_HOSTNAME}
     environment:
-      ALIASES: postmaster:${MAIL_USER};hostmaster:${MAIL_USER};webmaster:${MAIL_USER};admin:${MAIL_USER};abuse:${MAIL_USER};${MAIL_USER}:${EXTERNAL_EMAIL_ADDRESS};${ADDITIONAL_ALIASES}
+      ALIASES: postmaster:${MAIL_USER};hostmaster:${MAIL_USER};webmaster:${MAIL_USER};admin:${MAIL_USER};abuse:${MAIL_USER};root:${MAIL_USER};${MAIL_USER}:${EXTERNAL_EMAIL_ADDRESS};${ADDITIONAL_ALIASES}
+      POSTFIX_RAW_CONFIG_MYNETWORKS:
+      POSTFIX_RAW_CONFIG_SMTPD_CLIENT_RESTRICTIONS:
       POSTFIX_RAW_CONFIG_SMTPD_HELO_RESTRICTIONS:
+      POSTFIX_RAW_CONFIG_SMTPD_SENDER_RESTRICTIONS:
+      POSTFIX_RAW_CONFIG_SMTPD_RECIPIENT_RESTRICTIONS:
+      POSTFIX_RAW_CONFIG_SMTPD_RELAY_RESTRICTIONS:
+      POSTFIX_RAW_CONFIG_SMTPD_DATA_RESTRICTIONS:
     networks:
       mail-net:
     ports:
       - target: ${INTERNAL_PORT}
-        published: ${PORT}
+        published: ${PORT1}
         protocol: tcp
         mode: ${PORT_MODE}
       - target: ${INTERNAL_PORT}
-        published: ${PORT}
+        published: ${PORT1}
+        protocol: udp
+        mode: ${PORT_MODE}
+      - target: ${INTERNAL_PORT}
+        published: ${PORT2}
+        protocol: tcp
+        mode: ${PORT_MODE}
+      - target: ${INTERNAL_PORT}
+        published: ${PORT2}
+        protocol: udp
+        mode: ${PORT_MODE}
+      - target: ${INTERNAL_PORT}
+        published: ${PORT3}
+        protocol: tcp
+        mode: ${PORT_MODE}
+      - target: ${INTERNAL_PORT}
+        published: ${PORT3}
         protocol: udp
         mode: ${PORT_MODE}
     volumes:
