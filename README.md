@@ -1,5 +1,19 @@
 # mail
 
+## Configure relay credentials
+
+Create `smtp-relay-passwd` and `smtp-relay-passwd-db` secrets with:
+
+```sh
+echo "[smtp.gmail.com]:587 user@gmail.com:password" > /etc/postfix/sasl/passwd
+chmod 400 /etc/postfix/sasl/passwd
+
+postmap /etc/postfix/sasl/sasl_passwd
+
+# /etc/postfix/sasl/sasl_passwd will contain smtp-relay-passwd secret value
+# /etc/postfix/sasl/sasl_passwd.db will contain smtp-relay-passwd-db secret value
+```
+
 ## Configure domain
 
 You must set the following DNS records at your public domain, replacing variables between `<>`:

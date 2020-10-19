@@ -15,6 +15,12 @@ services:
       POSTFIX_RAW_CONFIG_SMTPD_RELAY_RESTRICTIONS:
       POSTFIX_RAW_CONFIG_SMTPD_DATA_RESTRICTIONS:
       POSTFIX_RAW_CONFIG_SMTPD_TLS_EXCLUDE_CIPHERS:
+      POSTFIX_RAW_CONFIG_RELAYHOST:
+      POSTFIX_RAW_CONFIG_SMTP_USE_TLS:
+      POSTFIX_RAW_CONFIG_SMTP_SASL_AUTH_ENABLE:
+      POSTFIX_RAW_CONFIG_SMTP_SASL_PASSWORD_MAPS:
+      POSTFIX_RAW_CONFIG_SMTP_SASL_SECURITY_OPTIONS:
+      POSTFIX_RAW_CONFIG_SMTP_SASL_TLS_SECURITY_OPTIONS:
     networks:
       mail-net:
     ports:
@@ -30,6 +36,13 @@ services:
       - data-vol:/var/mail
       - dkim-vol:/etc/postfix/dkim/
       - log-vol:/var/log
+    secrets:
+      - source: smtp-relay-passwd
+        target: /etc/postfix/sasl/passwd
+        mode: 0400
+      - source: smtp-relay-passwd-db
+        target: /etc/postfix/sasl/passwd.db
+        mode: 0400
     deploy:
       mode: replicated
       replicas: ${REPLICAS:-1}
@@ -63,3 +76,12 @@ volumes:
 
   log-vol:
     name: ${LOG_VOL_NAME:-mail-log-vol}
+
+secrets:
+  smtp-relay-passwd:
+    name: ${SMTP_RELAY_PASSWD_SECRET_NAME:-mail-smtp-relay-passwd}
+    external: true
+
+  smtp-relay-passwd-db:
+    name: ${SMTP_RELAY_PASSWD_DB_SECRET_NAME:-mail-smtp-relay-passwd-db}
+    external: true
